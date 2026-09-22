@@ -88,7 +88,11 @@ def train_and_track(run_name="RandomForest_Baseline", params=None):
             mlflow.log_artifact('data/processed/dataset_metadata.json', artifact_path="metadata")
 
         # 8. Log Model Artifact
-        mlflow.sklearn.log_model(sk_model=model, name="model")
+        mlflow.sklearn.log_model(
+            sk_model=model,
+            name="model",
+            skops_trusted_types=["sklearn.tree._tree.Tree"]
+        )
 
         # Save local backup
         joblib.dump(model, 'models/random_forest_model.pkl')
@@ -132,6 +136,7 @@ if __name__ == "__main__":
     #     model = LogisticRegression(**params)
     #     model.fit(X_train, y_train)
         
+    
     #     # 3. Evaluate Predictions
     #     y_pred = model.predict(X_test)
     #     y_prob = model.predict_proba(X_test)[:, 1]
