@@ -1,9 +1,10 @@
-# Virtual environment
+
+# Virtual environments
 .venv/
 venv/
 env/
 
-# Python
+# Python cache
 __pycache__/
 *.py[cod]
 *.pyo
@@ -11,25 +12,31 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Raw and processed data
+# Raw and generated data
 data/raw/*.csv
 data/processed/*.npy
+data/processed/*.csv
+Data/processed/*.csv
 
 # Models
 models/*.pkl
 
-# Logs
+# Logs and outputs
 logs/
-
-# Outputs
 outputs/
 
 # MLflow
 mlruns/
 mlflow.db
 
-# Artifacts
+# Generated artifacts
 artifacts/
+
+# Backups
+backup_before_lab7/
 
 # VS Code
 .vscode/
+
+# Temporary Lab 9 test files
+*.lab9_backup
