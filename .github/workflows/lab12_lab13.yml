@@ -66,6 +66,9 @@ jobs:
           )
           python -m py_compile $files
 
+      - name: Create deterministic CI test datasets
+        run: python scripts/create_ci_test_data.py
+
       - name: Run Lab 12-13 tests
         run: python -m pytest -q -p no:cacheprovider tests/test_lab12_monitoring.py tests/test_lab13_pipeline.py
 
