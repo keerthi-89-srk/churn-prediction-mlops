@@ -33,7 +33,7 @@ permissions:
 
 jobs:
   lab-validation:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     env:
       MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
     steps:
