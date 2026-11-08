@@ -1,0 +1,107 @@
+name: Lab 12-13 Monitoring and Pipeline
+
+on:
+  workflow_dispatch:
+    inputs:
+      execute_pipeline:
+        description: Run the guarded pipeline for an incoming Telco CSV present on the runner
+        required: true
+        type: boolean
+        default: false
+      incoming_path:
+        description: Runner-local path to a labeled Telco Customer Churn CSV
+        required: false
+        type: string
+      register_candidate:
+        description: Register the candidate only if it passes the quality gate and Production comparison
+        required: true
+        type: boolean
+        default: false
+      promote_candidate:
+        description: Promote an eligible candidate to Production
+        required: true
+        type: boolean
+        default: false
+      deploy_candidate:
+        description: Update the existing Telco Kubernetes deployment after promotion
+        required: true
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  lab-validation:
+    runs-on: self-hosted
+    env:
+      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+    steps:
+      - name: Checkout project
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install project dependencies
+        run: python -m pip install -r requirements.txt
+
+      - name: Compile Lab 12 and Lab 13 Python files
+        shell: pwsh
+        run: |
+          $files = @(
+            "12_data_drift.py",
+            "12_prediction_drift.py",
+            "12_concept_drift.py",
+            "12_performance_monitoring.py",
+            "12_api_performance_monitoring.py",
+            "12_retrain_model.py",
+            "13_end_to_end.py",
+            "src/lab12_monitoring.py",
+            "src/lab13_pipeline.py"
+          )
+          python -m py_compile $files
+
+      - name: Run Lab 12-13 tests
+        run: python -m pytest -q -p no:cacheprovider tests/test_lab12_monitoring.py tests/test_lab13_pipeline.py
+
+      - name: Validate self-hosted runner tools
+        if: ${{ inputs.execute_pipeline }}
+        shell: pwsh
+        run: |
+          if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
+            throw "Docker CLI is required for a requested deployment."
+          }
+          docker info --format '{{.ServerVersion}}'
+          kubectl config current-context
+          kubectl get nodes
+
+      - name: Run guarded candidate pipeline
+        if: ${{ inputs.execute_pipeline }}
+        shell: pwsh
+        env:
+          INCOMING_PATH: ${{ inputs.incoming_path }}
+          REGISTER_CANDIDATE: ${{ inputs.register_candidate }}
+          PROMOTE_CANDIDATE: ${{ inputs.promote_candidate }}
+          DEPLOY_CANDIDATE: ${{ inputs.deploy_candidate }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:INCOMING_PATH)) {
+            throw "Provide incoming_path when execute_pipeline is enabled."
+          }
+          $arguments = @("13_end_to_end.py", "--incoming", $env:INCOMING_PATH)
+          if ($env:REGISTER_CANDIDATE -eq "true") { $arguments += "--register-candidate" }
+          if ($env:PROMOTE_CANDIDATE -eq "true") { $arguments += "--promote" }
+          if ($env:DEPLOY_CANDIDATE -eq "true") { $arguments += "--deploy" }
+          python @arguments
+
+      - name: Upload Lab 12-13 reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lab12-lab13-${{ github.run_number }}
+          path: |
+            reports/lab12/**
+            reports/lab13/**
+          if-no-files-found: ignore

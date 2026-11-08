@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: telco-churn-api
+  labels:
+    app: telco-churn-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: telco-churn-api
+  template:
+    metadata:
+      labels:
+        app: telco-churn-api
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: telco-churn-api
+          image: telco-churn-api:lab11
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 8000
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop:
+                - ALL
+          volumeMounts:
+            - name: inference-logs
+              mountPath: /app/logs
+      volumes:
+        - name: inference-logs
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: telco-churn-api
+  labels:
+    app: telco-churn-api
+spec:
+  type: ClusterIP
+  selector:
+    app: telco-churn-api
+  ports:
+    - name: http
+      port: 8000
+      targetPort: http

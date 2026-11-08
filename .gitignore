@@ -17,9 +17,11 @@ data/raw/*.csv
 data/processed/*.npy
 data/processed/*.csv
 Data/processed/*.csv
+data/incoming/
 
 # Models
 models/*.pkl
+# deployment model files are required for Docker build
 
 # Logs and outputs
 logs/
@@ -40,3 +42,10 @@ backup_before_lab7/
 
 # Temporary Lab 9 test files
 *.lab9_backup
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Log files
+*.log

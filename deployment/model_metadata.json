@@ -1,0 +1,23 @@
+{
+  "model_name": "TelcoChurnClassifier",
+  "model_version": 1,
+  "model_id": "m-fa8514d9fbcb4f7a8c056b5496573b17",
+  "run_id": "3482c67b7c5f47aeb1a2cd20ea674627",
+  "preprocessor_run_id": "3482c67b7c5f47aeb1a2cd20ea674627",
+  "model_uri": "models:/TelcoChurnClassifier/1",
+  "model_source": "models:/m-fa8514d9fbcb4f7a8c056b5496573b17",
+  "model_stage": "Production",
+  "metrics": {
+    "accuracy": 0.7806955287437899,
+    "precision": 0.5757575757575758,
+    "recall": 0.660427807486631,
+    "f1_score": 0.6151930261519303,
+    "roc_auc": 0.8403407476297502
+  },
+  "preprocessor_artifact": "preprocessing_pipeline/preprocessor.pkl",
+  "generated_at_utc": "2026-10-26T16:01:40.393014+00:00",
+  "sha256": {
+    "model.pkl": "ac12d56c3dea49189424dd7992495738b3c34305876f504449024a7beb530eb8",
+    "preprocessor.pkl": "95db88cdca5b753d2b6b8bb5a374ad28e462f036abc6b52117d2628cdf3b6724"
+  }
+}

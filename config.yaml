@@ -37,3 +37,15 @@ paths:
 lab9:
   repetitions: 3
 
+lab12:
+  data_drift_psi_threshold: 0.2
+  prediction_drift_psi_threshold: 0.2
+  concept_drift_max_f1_drop: 0.1
+  api_max_p95_latency_ms: 1000
+  api_max_error_rate: 0.05
+
+lab13:
+  retrain_only_when_drifted: true
+  minimum_f1_improvement: 0.0
+  auto_promote: false
+  auto_deploy: false

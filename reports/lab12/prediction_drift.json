@@ -1,0 +1,12 @@
+{
+  "status": "NO_DRIFT",
+  "threshold": 0.2,
+  "reference_rows": 264,
+  "current_rows": 265,
+  "feature_psi": {
+    "prediction": 0.0,
+    "churn_probability": 0.013902226337837116
+  },
+  "drifted_features": [],
+  "generated_at_utc": "2026-11-07T05:29:20.991216+00:00"
+}
